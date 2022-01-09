@@ -1,4 +1,6 @@
 <?php
+require "user_upload_functions.php";
+
 $shortopts  = "";
 $shortopts .= "u:";  
 $shortopts .= "p:";
@@ -13,23 +15,32 @@ $longopts  = array(
 );
 $options = getopt($shortopts, $longopts);
 //var_dump($options);
-foreach(array_keys($options) as $key) switch($key){
-    case "help":
-        print_help_message();
-
-}
-
-function  print_help_message()
+foreach(array_keys($options) as $key) 
 {
-    print( "• --file [csv file name] – this is the name of the CSV to be parsed
-• --create_table – this will cause the MySQL users table to be built (and no further
-• action will be taken)
-• --dry_run – this will be used with the --file directive in case we want to run the
-script but not insert into the DB. All other functions will be executed, but the
-database won't be altered
-• -u – MySQL username
-• -p – MySQL password
-• -h – MySQL host
-• --help – which will output the above list of directives with details.\n");
+    switch($key)
+    {
+        case "file":
+            $file = $options['file'];
+        break;
+        case "create_table":
+            $create_table = true;
+        break;
+        case "dry_run":
+            $dry_run = true;
+        break;
+        case "u":
+            $mysql_username = $options['u'];
+        break;
+        case "p":
+            $mysql_password = $options['p'];
+        break;
+        case "h":
+            $mysql_host = $options['h'];
+        break; 
+        case "help":
+            print_help_message();
+        break;
+    }
 }
+
 ?>
