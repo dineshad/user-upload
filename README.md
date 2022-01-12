@@ -1,4 +1,4 @@
-# user_upload.php
+# Upload Users
 
 A PHP script which accepts a CSV file as input,processes the CSV file and insert the parsed file data into a MySQL database. This script is executed from the command line. 
 

@@ -15,32 +15,37 @@ $longopts  = array(
 );
 $options = getopt($shortopts, $longopts);
 //var_dump($options);
-foreach(array_keys($options) as $key) 
-{
-    switch($key)
+if (isset($options['file'])){
+    //echo 'file option is there' ;
+    $filename = "import/" . $options['file'];
+    if (file_exists($filename))  {
+        //echo 'file exists' ;
+        $users = get_csv_to_array($filename);        
+        //var_dump($users);       
+
+    }    
+    else
     {
-        case "file":
-            $file = $options['file'];
-        break;
-        case "create_table":
-            $create_table = true;
-        break;
-        case "dry_run":
-            $dry_run = true;
-        break;
-        case "u":
-            $mysql_username = $options['u'];
-        break;
-        case "p":
-            $mysql_password = $options['p'];
-        break;
-        case "h":
-            $mysql_host = $options['h'];
-        break; 
-        case "help":
-            print_help_message();
-        break;
+        echo 'The CSV file doesn not exist in import folder.<br>' ;
     }
+
+}
+else{
+    //echo 'no file option';
+    if (isset($options['create_table']))
+    {
+        if ((isset($options['u'])&& isset($options['p']) && isset($options['h']) ))
+        {
+            create_users_table($options['u'],$options['p'],$options['h']);
+        }
+        else
+        {
+            echo "Please provide username,password and host for the database" ;
+        }
+    }
+    if (isset($options['help']))
+        print_help_message();
+
 }
 
 ?>
