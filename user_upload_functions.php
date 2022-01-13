@@ -41,11 +41,9 @@ function create_users_table($host,$username,$password){
                 "UNIQUE KEY unique_email (email) )";
                 try{
                 if ($conn->query($sql_create) === TRUE) {
-                    echo "user table created successfully\n\n";
-                    $conn->close();
+                    echo "user table created successfully\n\n";                   
                 } else {
-                    throw new Exception("Error creating user table: " . $conn->error);
-                    $conn->close();                    
+                    throw new Exception("Error creating user table: " . $conn->error . "\n\n");
                 }}
                 catch(Exception $ne){
                     echo $ne->getMessage();
@@ -58,11 +56,75 @@ function create_users_table($host,$username,$password){
         exit();
     }  
 }
+/**
+ * Get the values of the CSV file to an array
+ *  
+ * */ 
+function get_csv_to_array($filename)
+{
+    if (($open = fopen($filename, "r")) !== FALSE) 
+    {
+        while (($data = fgetcsv($open, 1000, ",")) !== FALSE) 
+        {        
+            $array[] = $data; 
+        }
+        fclose($open);
+    }  
+    return $array ;
+}
+/**
+ * Insert user details with valid emails to the db table 
+ *  
+ * */ 
+function insert_to_db($host,$username,$password,$array){
+    create_users_table($host,$username,$password);
+    $dbname = "user_details";
+    $conn = new mysqli($host, $username, $password, $dbname);
+    try{
+        if ($conn->connect_error) { 
+            throw new Exception("Connection failed:\n" . $conn->connect_error ."\n");
+        }
+        else{
+            foreach($array as $value) {     
+                $fname = mysqli_real_escape_string($conn,$value[0]);     
+                $lname = mysqli_real_escape_string($conn,$value[1]);     
+                $email = mysqli_real_escape_string($conn,$value[2]); 
 
+                $sql_insert  = " INSERT IGNORE INTO user (fname,lname,email) VALUES " . 
+                               "('" . $fname . "','" ."$lname" . "','" . $email . "')" ;
+                              
+                
+                if ($conn->query($sql_insert)) {
+                    echo implode(",",$value) . " successfully inserted to db.\n" ;           
+                }
+                else{
+                    echo implode(",",$value) . "Error inserting to db.";
+                }
+        
+            }
+        } 
 
-    
-
-
+    }         
+    catch(Exception $e){
+        echo $e->getMessage();
+        exit();
+    }
+    $conn->close();  
+}
+/**
+ * Print array items with a preceding message. 
+ *  
+ * */
+function print_array_with_message($message,$array){
+    echo "$message\n";
+    foreach($array as $value) {
+    echo implode(" ",$value) . "\n";
+    }
+}
+/**
+ * Print details regarding commandline options
+ *  
+ * */   
 function  print_help_message()
 {
     echo "\n----------------------------------------\n";
@@ -80,19 +142,5 @@ function  print_help_message()
     str_pad("\n",31) ."All other functions will be executed, but the database will not be altered or updated.\n\n";
     echo str_pad("--help",30). "Explains options/directives of user_upload.php\n\n"; 
 }
-// invalid will not be inserted to db
-
-// shift
-// function get_csv_to_array($filename)
-// {
-//     if (($open = fopen($filename, "r")) !== FALSE) 
-//     {
-//         while (($data = fgetcsv($open, 1000, ",")) !== FALSE) 
-//         {        
-//             $array[] = $data; 
-//         }
-//         fclose($open);
-//     }  
-//     return $array ;
 ?>
 
