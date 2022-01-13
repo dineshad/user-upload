@@ -126,7 +126,7 @@ else{
         }
     }    
     else{
-        echo 'The CSV file doesn not exist in import folder.<br>' ;
+        echo "The CSV file doesn not exist in import folder.\n\n" ;
     }
 }
 ?>
