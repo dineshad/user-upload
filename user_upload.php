@@ -1,63 +1,23 @@
 <?php
 /**
- * A PHP script to parse a CSV and upload the value
+ * A PHP class to parse a CSV and upload the value
  * to MySQL database table.
- * 
- * Pseudocode:
- * IF  notset (--file ) THEN 
- *  IF  isset (--create_table ) THEN  
- *      IF  isset (-h AND -u AND -p ) THEN 
- *           create_users_table(h,u,p)
- *      ELSE
- *          print("Please retry with username,password and host for the database")
- *      ENDIF
- *  ENDIF
- *  IF isset (--help )
- *       print_help_message()
- *  ENDIF
- * ELSE
- *  IF exist(filename)
- *      set users_array = get_csv_to_array(filename)
- *      IF sizeof(users_array) > 0
- *          FOREACH(users_array)
- *              ucfirst(first_name)
- *              ucfirst(last_name)
- *              strtolower(email)
- *              IF (valid email)
- *                  add to (valid_email_users_array)
- *              ELSE
- *                  add to (invalid_email_users_array)
- *              ENDIF
- *          END FOREACH
- *          IF notset(--dry_run)
- *              insert_to_db(h,u,p,valid_email_users_array)
- *          ENDIF
- *          print_valid_email_users_array
- *          print_invalid_email_users_array
- *      ELSE
- *          print("No user data in the file");
- *      ENDIF
- *  ELSE
- *      print("Please save the csv file in import folder and retry.")
- *  ENDIF 
  * 
  * @author     Dinesha Dayananda <dinesha.dayananda@gmail.com> 
  * @version    1.0
  */
+
 require "user_upload_functions.php";
 
-$shortopts  = "";
-$shortopts .= "u:";  
-$shortopts .= "p:";
-$shortopts .= "h:";
+//Get the options. Print error message if no options.
+$options = getopt('u:p:h:',array('file','create_table','dry_run','help'));
+if(sizeOf($options) == 0){
+    exit("Please retry with options.\n Execute php \"" . basename(__FILE__) . " --help\" for more information.\n") ;
+}
 
-$longopts  = array(
-    "file:",
-    "create_table",
-    "dry_run", 
-    "help"        
-);
-$options = getopt($shortopts, $longopts);
+// $csv_parser = new CSVParser();
+// $sqli = new sqli();
+
 // if --file option is not set
 if (!isset($options['file'])){
     if (isset($options['create_table'])){
