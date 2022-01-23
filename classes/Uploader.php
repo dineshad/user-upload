@@ -156,15 +156,11 @@ class Uploader  {
         $this->createTable();
         foreach($this->data as $value) {  
             if ($value['valid_email']){
-                $fname = mysqli_real_escape_string($this->conn,$value[0]);     
-                $lname = mysqli_real_escape_string($this->conn,$value[1]);     
-                $email = mysqli_real_escape_string($this->conn,$value[2]); 
 
-                $sql_insert  = " INSERT INTO user (fname,lname,email) VALUES " . 
-                            "('" . $fname . "','" ."$lname" . "','" . $email . "')" ;
-
+                $sql_insert = $this->conn->prepare(" INSERT INTO user (fname,lname,email) VALUES (?, ?, ?)" );
+                $sql_insert->bind_param("sss",$value[0], $value[1], $value[2]);
                 try {
-                    $this->conn->query($sql_insert);
+                    $sql_insert->execute();
                     echo str_pad($value[0],8) . str_pad($value[1],8) . str_pad($value[2],8)  . " successfully uploaded to db.\n" ;           
                 }
                 catch(Exception $e) {
