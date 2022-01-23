@@ -27,11 +27,11 @@ class Uploader  {
         isset($options['file']) ? $this->getDataFromFile() : false ;        
     }
 
-    /*
-    public function sanitizeOptions(){
-        //validate options using a third party library.
-    }
-    */
+    
+    // public function sanitizeOptions(){
+    //     //validate options using a third party library.
+    // }
+    
     /**
      * Process the options and determin
      * which action need to be taken.
