@@ -1,23 +1,6 @@
 <?php
 /**
- * TRY connect_db
- *  IF error(connect_db)
- *      THROW EXCEPTION("Error creating users table.")
- *  ELSE
- *      IF table_exist(user)   
- *          drop_table(user);
- *          print "user table is dropped successfully.\n"
- *      ELSE
- *      TRY create_table
- *          IF success(create_table)
- *              PRINT("user table created successfully.)
- *          ELSE
- *              THROW EXCEPTION("Error creating user table")
- *          ENDIF
- *      CATCH EXCEPTION             
- *      EXIT
- * CATCH EXCEPTION 
- * EXIT              
+ *    
  */
 function create_users_table($host,$username,$password){   
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);      
