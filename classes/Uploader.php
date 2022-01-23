@@ -1,4 +1,13 @@
 <?php
+/**
+ * A PHP class to parse a CSV and upload the value
+ * to MySQL database table.
+ * 
+ * @param      $options
+ * 
+ * @author     Dinesha Dayananda <dinesha.dayananda@gmail.com> 
+ * @version    1.0
+ */
 class Uploader  {
 
     public  $options;
@@ -23,7 +32,10 @@ class Uploader  {
         //validate options using a third party library.
     }
     */
-
+    /**
+     * Process the options and determin
+     * which action need to be taken.
+     */
     public function processOptions() {
         
         if (array_key_exists('help',$this->options ))
@@ -38,7 +50,11 @@ class Uploader  {
             exit("Incorrect options.Execute \"php user_upload.php --help\" for more information or refer the user guide.\n");
             
     }
-
+    /**
+     * Try connecting to the database
+     * and if success, assign the connection to
+     * $this->conn
+     */
     private function connectToDB(){
          
         try{
@@ -51,7 +67,10 @@ class Uploader  {
             exit($e->getMessage() . "\n");
         }        
     }
-
+    /**
+     * Check whether the  file exists in the same directory as user_upload.php
+     * and whether the extension of the file is .csv
+     */
     private function validateFile(){
         try {
             if (!file_exists($this->options['file']) )
@@ -68,6 +87,9 @@ class Uploader  {
         return true ;
     }
 
+    /**
+     * Extract the data in csv file to an array.
+     */
     private function readDatatoArray(){
 
         $data_array = [];
@@ -82,8 +104,12 @@ class Uploader  {
         return $data_array ;
     }
 
+    /**
+     * Strip the header row
+     * Formats data(Change case, trim white spaces)
+     * Validates email
+     */
     private function sanitizeData($data_array){
-
         //removing header values
         array_shift($data_array);
         if (!sizeof($data_array) > 0 )
@@ -95,7 +121,7 @@ class Uploader  {
             //Remove all characters except letters, digits and !#$%&'*+-=?^_`{|}~@.[].  
             $value[2] = filter_var($value[2], FILTER_SANITIZE_EMAIL);  
             //Checks whether the value is a valid e-mail address
-            //and alla flag         
+            //and add a flag to show it.         
             if (filter_var(trim($value[2]), FILTER_VALIDATE_EMAIL)) 
                 $value['valid_email'] = true; 
             else                   
@@ -104,7 +130,10 @@ class Uploader  {
         return $data_array;
     }
 
-
+    /**
+     * Executes validateFile(),readDatatoArray,sanitizeData
+     * in one go and assign to $this->data
+     */
     private function getDataFromFile(){
         $this->validateFile();
         $data_array = $this->readDatatoArray();
@@ -112,6 +141,10 @@ class Uploader  {
         $this->data = $sanitised_data;
     }
 
+    /**
+     * Extract,format,validate data 
+     * without uploading to the database.
+     */
     private function dryRun(){
         echo "List of Users with Valid Emails:\n";
         foreach($this->data as $value) {
@@ -125,6 +158,10 @@ class Uploader  {
         }
     }
 
+    /**
+     * Create user table after dropping it
+     * if already exists.  
+     */
     private function createTable(){  
 
         $sql_drop = "DROP TABLE IF EXISTS user"  ;
@@ -151,6 +188,9 @@ class Uploader  {
             } 
     }
 
+    /**
+     * Upload the data to the database.
+     */
     private function uploadDataToDB(){
 
         $this->createTable();
@@ -173,6 +213,9 @@ class Uploader  {
         }
     }
     
+    /**
+     * Display Help information.
+     */
     private function displayHelpMessage(){
         echo "\n----------------------------------------\n";
         echo "Options/Directives for user_upload.php\n";
@@ -189,7 +232,10 @@ class Uploader  {
         echo str_pad("--help",30). "Lists options for user_upload.php\n\n"; 
     }
 
-    //destructor(Automicatically called)
+    /**
+     * destructor(Automicatically called)
+     * Close the db connection if it's opened.
+     */
     public function __destruct(){
         if (isset($this->conn))
             $this->conn->close();

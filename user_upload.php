@@ -1,6 +1,6 @@
 <?php
 /**
- * A PHP class to parse a CSV and upload the value
+ * A PHP script to parse a CSV and upload the value
  * to MySQL database table.
  * 
  * @author     Dinesha Dayananda <dinesha.dayananda@gmail.com> 
