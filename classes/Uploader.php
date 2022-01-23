@@ -116,12 +116,12 @@ class Uploader  {
         echo "List of Users with Valid Emails:\n";
         foreach($this->data as $value) {
             if ($value['valid_email'])
-                echo $value[0] . " " . $value[1] . " " . $value[2] ."\n";
+            echo str_pad($value[0],8) . str_pad($value[1],8) . str_pad($value[2],8) ."\n";
         }
         echo "\nList of Users with Invalid Emails:\n";
         foreach($this->data as $value) {
             if (!$value['valid_email'])
-                echo $value[0] . " " . $value[1] . " " . $value[2] ."\n";
+            echo str_pad($value[0],8) . str_pad($value[1],8) . str_pad($value[2],8) ."\n";
         }
     }
 
@@ -160,14 +160,15 @@ class Uploader  {
                 $lname = mysqli_real_escape_string($this->conn,$value[1]);     
                 $email = mysqli_real_escape_string($this->conn,$value[2]); 
 
-                $sql_insert  = " INSERT IGNORE INTO user (fname,lname,email) VALUES " . 
+                $sql_insert  = " INSERT INTO user (fname,lname,email) VALUES " . 
                             "('" . $fname . "','" ."$lname" . "','" . $email . "')" ;
 
-                if ($this->conn->query($sql_insert)) {
+                try {
+                    $this->conn->query($sql_insert);
                     echo str_pad($value[0],8) . str_pad($value[1],8) . str_pad($value[2],8)  . " successfully uploaded to db.\n" ;           
                 }
-                else{
-                    echo implode(",",$value) . "Error inserting to db.";
+                catch(Exception $e) {
+                    echo $e->getMessage(). "\n";
                 }
             }
             else{
