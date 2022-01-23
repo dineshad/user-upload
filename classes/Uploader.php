@@ -18,19 +18,14 @@ class Uploader  {
         isset($options['file']) ? $this->getDataFromFile() : false ;        
     }
 
-    // public function sanitizeOptions(){
-    //     //expect to validate commandline options using a third party library.
-    // }
+    /*
+    public function sanitizeOptions(){
+        //validate options using a third party library.
+    }
+    */
 
     public function processOptions() {
         
-        // if ( isset($this->options['file']) && !isset($this->options['dry_run'])) 
-        //     $this->options['upload'] = true ;
-
-        //var_dump($this->options);
-        //$keys = array_keys($this->options);
-        //var_dump($keys);
-        //in_array('help',$keys) ? $this->displayHelpMessage() : df;
         if (array_key_exists('help',$this->options ))
             $this->displayHelpMessage();
         elseif (array_key_exists('dry_run',$this->options ))
@@ -41,62 +36,33 @@ class Uploader  {
             isset($this->conn) && isset($this->data) ? $this->uploadDataToDB() : exit("Please retry with correct host,username and password of the database and csv file.\n");
         else
             exit("Incorrect options.Execute \"php user_upload.php --help\" for more information or refer the user guide.\n");
-        
-        //     foreach($this->options as $key => $val)
-        // {
-        //     //echo $key. "\n";
-        //     switch($key){
-        //         case 'help':
-                    
-        //         break;
-        //         case 'dry_run':
-                    
-        //         break;
-        //         case 'create_table':
-                    
-        //         break;
-        //         case ('file'):
-        //             !isset($this->options['dry_run']) && 
-        //         break;
-        //         default:
-                    
-        //     }
-        // }
+            
     }
 
     private function connectToDB(){
-         ;
+         
         try{
             $conn = new mysqli($this->options['h'], $this->options['u'], $this->options['p'], self::DATABASE);
-            
             if (!$conn->connect_error) {
                 $this->conn = $conn;
             }
         }
         catch (Exception $e){
-            //print_r($e->getTrace());
-            //is exit necessary?
             exit($e->getMessage() . "\n");
-            
         }        
     }
 
-    private function validateFile()
-    {
-        //if file exists
-        //type.csv
+    private function validateFile(){
         try {
-            if (!file_exists($this->options['file']) ) {
+            if (!file_exists($this->options['file']) )
                 throw new Exception('File not found.');
-            }
-            //check if .csv
-            // if (  ) {
-            //     throw new Exception('File openning failed.');
-            // } 
-            //if empty
+
+            $extension = pathinfo($this->options['file'], PATHINFO_EXTENSION);
+            if ( strtolower($extension) != 'csv')  {
+                throw new Exception('Incorrect file type.');
+            } 
         } 
         catch ( Exception $e ) {
-            //is exit necessary?
             exit($e->getMessage() . "\n");
         } 
         return true ;
@@ -105,23 +71,16 @@ class Uploader  {
     private function readDatatoArray(){
 
         $data_array = [];
-        //$data_array = file($this->options['file']);
         $file = fopen($this->options['file'],"r");
 
         while($data = fgetcsv($file))
         {
-
-        //$data = fgetcsv($file);
-        $data_array[] = $data; 
+            $data_array[] = $data; 
         }
 
         fclose($file);      
-       return $data_array ;
+        return $data_array ;
     }
-        
-
-
-    
 
     private function sanitizeData($data_array){
 
@@ -130,18 +89,17 @@ class Uploader  {
         if (!sizeof($data_array) > 0 )
             exit("No valid data in the file.\n");
         foreach($data_array as &$value){
-            $value[0] = ucfirst(strtolower(($value[0]))) ;
-            $value[1] = ucfirst(strtolower(($value[1]))) ;
-            $value[2] = strtolower($value[2]) ; 
+            $value[0] = trim(ucfirst(strtolower(($value[0])))) ;
+            $value[1] = trim(ucfirst(strtolower(($value[1])))) ;
+            $value[2] = trim(strtolower($value[2])) ; 
             //Remove all characters except letters, digits and !#$%&'*+-=?^_`{|}~@.[].  
             $value[2] = filter_var($value[2], FILTER_SANITIZE_EMAIL);  
-            //Validates whether the value is a valid e-mail address.         
-            if (filter_var(trim($value[2]), FILTER_VALIDATE_EMAIL)) {  
+            //Checks whether the value is a valid e-mail address
+            //and alla flag         
+            if (filter_var(trim($value[2]), FILTER_VALIDATE_EMAIL)) 
                 $value['valid_email'] = true; 
-            }
-            else{                    
-                $value['valid_email'] = false; 
-            }
+            else                   
+                $value['valid_email'] = false;
         }
         return $data_array;
     }
@@ -151,33 +109,32 @@ class Uploader  {
         $this->validateFile();
         $data_array = $this->readDatatoArray();
         $sanitised_data = $this->sanitizeData($data_array);
-       
         $this->data = $sanitised_data;
-        //var_dump($this->data);
     }
 
     private function dryRun(){
-        echo "In dry run\n";
+        echo "List of Users with Valid Emails:\n";
         foreach($this->data as $value) {
-        echo implode(" ",$value) . "\n";
-        //exit();
+            if ($value['valid_email'])
+                echo $value[0] . " " . $value[1] . " " . $value[2] ."\n";
+        }
+        echo "\nList of Users with Invalid Emails:\n";
+        foreach($this->data as $value) {
+            if (!$value['valid_email'])
+                echo $value[0] . " " . $value[1] . " " . $value[2] ."\n";
+        }
     }
 
-    }
-    private function createTable(){   
-        //echo 'in createTable\n';
+    private function createTable(){  
 
         $sql_drop = "DROP TABLE IF EXISTS user"  ;
-        try{
-            $this->conn->query($sql_drop);
-            echo "user table is dropped successfully IF it existed.\n" ;                   
-    
-        }
-        catch (Exception $e){
-            //print_r($e->getTrace());
-            echo $e->getMessage() . "\n";
-        } 
-        
+            try{
+                $this->conn->query($sql_drop);
+                echo "user table is dropped successfully IF it existed.\n" ;  
+            }
+            catch (Exception $e){
+                exit($e->getMessage() . "\n");
+            } 
         $sql_create = "CREATE TABLE IF NOT EXISTS user (".
             "user_id INT NOT NULL AUTO_INCREMENT, ".
             "fname VARCHAR(30) NOT NULL,".
@@ -185,52 +142,38 @@ class Uploader  {
             "email VARCHAR(30) NOT NULL,".
             "PRIMARY KEY(user_id),".
             "UNIQUE KEY unique_email (email) )";
-        try{
-            $this->conn->query($sql_create);
-            echo "user table created successfully\n\n";                   
-    
-        }
-        catch (Exception $e){
-            //print_r($e->getTrace());
-            echo $e->getMessage() . "\n";
-        } 
-        
+            try{
+                $this->conn->query($sql_create);
+                echo "user table created successfully\n\n";  
+            }
+            catch (Exception $e){
+                echo $e->getMessage() . "\n";
+            } 
     }
 
-       
-        
-    
     private function uploadDataToDB(){
-        // echo 'in upload to db' ;
-        
-        // $this->conn
+
         $this->createTable();
-        //var_dump($this->data);
-        
         foreach($this->data as $value) {  
             if ($value['valid_email']){
-            $fname = mysqli_real_escape_string($this->conn,$value[0]);     
-            $lname = mysqli_real_escape_string($this->conn,$value[1]);     
-            $email = mysqli_real_escape_string($this->conn,$value[2]); 
+                $fname = mysqli_real_escape_string($this->conn,$value[0]);     
+                $lname = mysqli_real_escape_string($this->conn,$value[1]);     
+                $email = mysqli_real_escape_string($this->conn,$value[2]); 
 
-            $sql_insert  = " INSERT IGNORE INTO user (fname,lname,email) VALUES " . 
-                           "('" . $fname . "','" ."$lname" . "','" . $email . "')" ;
-                          
-                echo $this->conn->query($sql_insert);
+                $sql_insert  = " INSERT IGNORE INTO user (fname,lname,email) VALUES " . 
+                            "('" . $fname . "','" ."$lname" . "','" . $email . "')" ;
+
                 if ($this->conn->query($sql_insert)) {
-                    echo implode(",",$value) . " successfully inserted to db.\n" ;           
+                    echo str_pad($value[0],8) . str_pad($value[1],8) . str_pad($value[2],8)  . " successfully uploaded to db.\n" ;           
                 }
                 else{
                     echo implode(",",$value) . "Error inserting to db.";
                 }
             }
             else{
-                
+                echo "\n" . str_pad($value[0],8) . str_pad($value[1],8) . str_pad($value[2],8) . " is not uploaded because invalid email.\n";
             }
-        
         }
-        
-        //exit();
     }
     
     private function displayHelpMessage(){
@@ -247,7 +190,6 @@ class Uploader  {
         str_pad("\n",31)."Use with -h, -u and -p options.\n\n";
         echo str_pad("--dry_run" ,30). "Parse,format and validates data without uploading to the database. Use with --file option.\n\n";        
         echo str_pad("--help",30). "Lists options for user_upload.php\n\n"; 
-        //exit();
     }
 
     //destructor(Automicatically called)
