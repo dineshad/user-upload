@@ -20,7 +20,7 @@ A PHP script which accepts a CSV file as input,processes the CSV file and insert
 - --create_table : Creates the user table to which user data is uploaded.
 - --dry_run : Parse,format and validates data without uploading to the database. Use with --file option.
 - --help : Lists options for user_upload.php
-php user_upload.php --dry_run -u moodle -p password -h localhost --file /home/ghada/Documents/
+
 
 * Requirements Document,Design Document,Testing Document and User Guide of the PHP script are available in the documents folder for more information.
 
