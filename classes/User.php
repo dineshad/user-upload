@@ -12,7 +12,6 @@
     private string $fname;
     private string $lname;
     private string $email;
-    private boolean $is_valid_email;
 
     public function  __construct($fname,$lname,$email){
         $this->fname = trim(ucfirst(strtolower(($fname))));
@@ -20,28 +19,20 @@
         $this->email = filter_var(trim(strtolower($email)),FILTER_SANITIZE_EMAIL); 
     }
 
-    private function set_email_validity(){
-        $this->is_valid_email = filter_var(trim($this->email), FILTER_VALIDATE_EMAIL) ?  true : false ;              
-    }
-
-    function get_fname()
-    {
+    public function get_fname(){
         return $this->fname;
     }
 
-    function get_lname()
-    {
+    public function get_lname(){
         return $this->lname;
     }
 
-    function get_email()
-    {
+    public function get_email(){
         return $this->email;
     }
 
-    function get_email_validity()
-    {
-        return $this->is_valid_email;
+    public function is_email_valid(){
+        return $is_valid = filter_var($this->email, FILTER_VALIDATE_EMAIL) ?  true : false ;
     }
  }
 ?>
