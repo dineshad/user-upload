@@ -24,7 +24,6 @@ A PHP script which accepts a CSV file as input,processes the CSV file and insert
 *If the user has provided options relevant to more than one action,only one selected action will be executed.
 (Actions are help,dry run, create table and uploading data)*
 
-
-*Requirements Document,Design Document and User Guide of the PHP script are available in the documents folder for more information.Testing document is being created.*
+*User Guide is available in the documents folder.*
 
 
