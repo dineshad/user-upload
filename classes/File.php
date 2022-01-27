@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * File class
  * 
@@ -10,14 +10,14 @@
 class File{
 
     private string $file_name;
-    private string $type;
     private string $location; 
-    private boolean $is_exist;
+    private bool $is_exist;
+    public $error ;
 
-    public function __construct($file_name,$type,$location = null){
+    public function __construct($file_name,$location = ''){
         $this->file_name = $file_name ; 
-        $this->type = $type;
         $this->location = $location;
+       
     }
 
     public function get_file_name(){
@@ -33,12 +33,50 @@ class File{
     }
 
     public function is_file_exist(){  
-        return $file_exist = file_exists($this->location.$this->name) ? true : false;
+        $file_path = $this->location.$this->file_name;
+        $file_exist = file_exists($file_path) ? true : false;
+        return $file_exist;
     }
 
     public function is_right_type($right_type){
         $extension = pathinfo($this->file_name, PATHINFO_EXTENSION);
         return $is_right_type = strcasecmp($right_type, $extension) == 0 ? true : false ;            
     }
-}
+
+    public function get_data_into_array(){
+        $data_array = [];
+        $file = fopen($this->file_name,"r");
+
+        while($data = fgetcsv($file))
+        {
+            $data_array[] = $data; 
+        }
+
+        fclose($file);      
+        return $data_array ;
+    }
+    }
+
+//-----------
+    // private function readDatatoArray(){
+
+    //     $data_array = [];
+    //     $file = fopen($this->options['file'],"r");
+
+    //     while($data = fgetcsv($file))
+    //     {
+    //         $data_array[] = $data; 
+    //     }
+
+    //     fclose($file);      
+    //     return $data_array ;
+    // }
+
+    // private function get_data_from_file(){
+    //     $this->validateFile();
+    //     $data_array = $this->readDatatoArray();
+    //     $sanitised_data = $this->sanitizeData($data_array);
+    //     $this->data = $sanitised_data;
+    // }
+
 ?>
