@@ -65,7 +65,6 @@ if ( array_key_exists('file',$options) ){
 }
 //Determine the action  and try execute the action.
 try {
-  
   $action = Uploader::get_action($options);
   //echo 'action:' . $action ;
   if ($action != NULL )

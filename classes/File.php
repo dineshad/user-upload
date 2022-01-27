@@ -11,8 +11,6 @@ class File{
 
     private string $file_name;
     private string $location; 
-    private bool $is_exist;
-    public $error ;
 
     public function __construct($file_name,$location = ''){
         $this->file_name = $file_name ; 
@@ -23,7 +21,7 @@ class File{
     public function get_file_name(){
         return $this->file_name;
     }
-    
+
     public function get_location(){
         return $this->location;
     }
