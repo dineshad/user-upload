@@ -23,11 +23,7 @@ class File{
     public function get_file_name(){
         return $this->file_name;
     }
-
-    public function get_type(){
-        return $this->type;
-    }
-
+    
     public function get_location(){
         return $this->location;
     }
@@ -55,28 +51,5 @@ class File{
         fclose($file);      
         return $data_array ;
     }
-    }
-
-//-----------
-    // private function readDatatoArray(){
-
-    //     $data_array = [];
-    //     $file = fopen($this->options['file'],"r");
-
-    //     while($data = fgetcsv($file))
-    //     {
-    //         $data_array[] = $data; 
-    //     }
-
-    //     fclose($file);      
-    //     return $data_array ;
-    // }
-
-    // private function get_data_from_file(){
-    //     $this->validateFile();
-    //     $data_array = $this->readDatatoArray();
-    //     $sanitised_data = $this->sanitizeData($data_array);
-    //     $this->data = $sanitised_data;
-    // }
-
+}
 ?>

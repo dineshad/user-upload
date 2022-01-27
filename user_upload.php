@@ -92,42 +92,9 @@ catch(Exception $e){
   exit($e->getMessage() . "\n");
 } 
 
-
 if ($conn)
     $conn->close();
-
-
-      // }
-//  : false ;
-//    // = new File($options['file']);
-// if ( $file->is_file_exist() || !$file->is_right_type("csv"))
-//      exit("File does not exist or incorrect type");
-
-//If correct file exists, try reading data and creating user objects.
-// $data_array = $file->get_data_into_array();
-// array_shift($data_array);
-// !sizeof($data_array) > 0 ?? exit("No valid data in the file.\n") ;
-// $user_obj_list = [];
-// foreach($data_array as $value){
-//     $user = new User($value[0],$value[1],$value[2]);
-//     array_push($user_obj_list,$user);
-// }
- 
-// if ($conn->error)
-//     exit($conn->error->message());
-// try{
-    //     $conn = new mysqli($this->options['h'], $this->options['u'], $this->options['p'], self::DATABASE);
-    //     if (!$conn->connect_error) {
-    //         $this->conn = $conn;
-    //     }
-    // }
-    // catch (Exception $e){
-    //     exit($e->getMessage() . "\n");
-    // }  
-
-
-
-
+    
 //@todo -sanitizeOptions(),autoload,charset,error handler,PHPUnit tests
 
 ?>
