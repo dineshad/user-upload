@@ -25,12 +25,11 @@ if (sizeOf($options) == 0)
 $conn = false ;
 if ( array_key_exists('h',$options) && array_key_exists('u',$options) && array_key_exists('p',$options)){
   try{
-    $conn = new mysqli($options['h'],$options['u'],$options['p'],DATABASE) ;
-    if ($conn->connect_error) 
-        throw new Exception($conn->connect_error);
+    @$conn = new mysqli($options['h'],$options['u'],$options['p'],DATABASE) ;
   }
-  catch (Exception $e){
-    exit($e->getMessage() . "\n");
+  catch (mysqli_sql_exception $e){
+    $e->getTrace();
+    exit("Cannot connect to database. Recheck database credentials" . "\n");
   } 
 } 
 
@@ -63,7 +62,7 @@ if ( array_key_exists('file',$options) ){
     exit($e->getMessage() . "\n");
   } 
 }
-//Determine the action  and try execute the action.
+//Get the action  and try execute the action.
 try {
   $action = Uploader::get_action($options);
   //echo 'action:' . $action ;
